@@ -1,7 +1,7 @@
 from pathlib import Path
 
 class Dataset:
-    def __init__(self, train_dir='data/train', test_dir='data/test'):
+    def __init__(self, train_dir='dump/train', test_dir='dump/test'):
         self.train_dir = Path(train_dir)
         self.test_dir = Path(test_dir)
 
