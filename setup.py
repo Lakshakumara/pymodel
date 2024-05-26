@@ -2,8 +2,8 @@ from setuptools import setup
 
 setup(name='slp',
       packages=['slp'],
-      version='0.0.1dev1',
+      version='1.0.0',
       entry_points={
-            'console_scripts': ['slp-cli=slp.cmd:main']
+            'console_scripts': ['sp=slp.cmd:main']
       }
       )

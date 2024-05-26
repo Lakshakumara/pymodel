@@ -1,40 +1,48 @@
 """SLP - machine-learning-production
 Usage:
-    slp-cli exam
-    slp-cli fexam
-    slp-cli tma
-    slp-cli tmasum
-    slp-cli ass
-    slp-cli assavg
-    slp-cli grade <status> [-s]
-    slp-cli drop
-    slp-cli complete
-    slp-cli fail
-    slp-cli passrate
-    slp-cli failrate
-    slp-cli clkps
-    slp-cli merge
-    slp-cli heatmap
+    sp version
+    sp train <grade>
+    sp predict <data>
+    sp exam
+    sp fexam
+    sp tma
+    sp tmasum
+    sp ass
+    sp assavg
+    sp grade <status> [-s]
+    sp drop
+    sp complete
+    sp fail
+    sp passrate
+    sp failrate
+    sp clkps
+    sp merge
+    sp heatmap
+    sp model
     
-    slp-cli train <dataset-dir> <model-file> [--vocab-size=<vocab-size>]
-    slp-cli ask <model-file> <question>
-    slp-cli (-h | --help)
+    sp train <dataset-dir> <model-file> [--vocab-size=<vocab-size>]
+    sp ask <model-file> <question>
+    sp (-h | --help)
 Arguments:
-    <status>       Distinction, Pass, Fail, Withdrawn 
-    <dataset-dir>  Directory with dataset.
-    <model-file>   Serialized model file.
-    <question>     Text to be classified.
+    <data>          1D numpy array eg: [90, 1, 2.5] 
+    <grade>         Distinction, Pass, Fail, Withdrawn 
+    <dataset-dir>   Directory with dataset.
+    <model-file>    Serialized model file.
+    <question>      Text to be classified.
 Options:
     -s                         slice 
     --vocab-size=<vocab-size>  Vocabulary size. [default: 10000]
     -h --help                  Show this screen.
+Commands:
+  exam       
+  fexam      
 """
 from docopt import docopt
 
 import os
 from sklearn.metrics import classification_report
 
-from slp import DumbModel, Dataset, OULAD_data
+from slp import DumbModel, Dataset, OULAD_data, Model
 
 def train_model(dataset_dir, model_file, vocab_size):
     print(f'Training model from directory {dataset_dir}')
@@ -66,10 +74,25 @@ def ask_model(model_file, question):
 
 def exam():
     print("Exam data printing ")
-    
+def pp(a, args):
+    print(a)
+    n=[float(x) for x in args.split(',')]   
+    print(n)
+     
 def main():
     arguments = docopt(__doc__)
     ou = OULAD_data()
+    m= Model()
+    if arguments['version']:
+        return "1.0.0"
+    if arguments['train']:
+        return m.train(arguments['<grade>'], arguments['<grade1>'])
+    
+    if arguments['predict']:
+        #print("in prediction block")
+        n=[float(x) for x in arguments['<data>'].split(',')] 
+        return m.predictionRF("rf_w_d", n)
+        
     if arguments['exam']:
         print("Exam activities")
         return ou._exam()
@@ -92,7 +115,7 @@ def main():
     
     elif arguments['grade']:
         print("student final grade")
-        return ou._grade(arguments['<status>'], arguments['-s'])
+        return ou._grade(arguments['<grade>'], arguments['-s'])
     
     elif arguments['complete']:
         print("student has passesed final exam")
@@ -120,6 +143,9 @@ def main():
     elif arguments['fexam']:
         return ou._final_exam_score()
     
+    elif arguments['model']:
+        return m.train()
+
     elif arguments['train']:
         train_model(arguments['<dataset-dir>'],
                     arguments['<model-file>'],
